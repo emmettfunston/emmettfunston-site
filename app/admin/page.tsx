@@ -2,7 +2,7 @@ import { isAdminAuthed } from "@/lib/admin/auth";
 import {
   getSupabaseAdminClient,
   SupabaseNotConfiguredError,
-} from "@/lib/supabase/server";
+} from "@/lib/supabase/admin";
 
 import { LoginForm } from "@/app/admin/_components/LoginForm";
 import { Dashboard } from "@/app/admin/_components/Dashboard";

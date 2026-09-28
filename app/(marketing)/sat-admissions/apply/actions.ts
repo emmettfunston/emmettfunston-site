@@ -3,7 +3,7 @@
 import {
   getSupabaseAdminClient,
   SupabaseNotConfiguredError,
-} from "@/lib/supabase/server";
+} from "@/lib/supabase/admin";
 import { sendApplicationEmails } from "@/lib/email/send";
 import {
   cohortApplicationSchema,

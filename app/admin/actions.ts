@@ -15,7 +15,7 @@ import {
 import {
   getSupabaseAdminClient,
   SupabaseNotConfiguredError,
-} from "@/lib/supabase/server";
+} from "@/lib/supabase/admin";
 
 // ---------------------------------------------------------------------------
 // Auth
