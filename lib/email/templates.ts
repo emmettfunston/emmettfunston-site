@@ -430,3 +430,95 @@ export function applicationAdminEmail({
 
   return { subject, html, text };
 }
+
+// ---------------------------------------------------------------------------
+// SAT Planner transactional emails
+// ---------------------------------------------------------------------------
+
+export function satPlannerWelcomeEmail({
+  siteUrl,
+  displayName,
+}: {
+  siteUrl: string;
+  displayName?: string | null;
+}): { subject: string; html: string; text: string } {
+  const name = displayName?.trim() || "there";
+  const subject = "Welcome to the SAT Study Planner";
+  const html = shell({
+    siteUrl,
+    previewText: "Your SAT Study Planner account is ready.",
+    body: `
+      <h1 style="font-size:24px;line-height:1.25;margin:0 0 16px 0;color:#171717;">Welcome, ${escape(name)}.</h1>
+      <p style="margin:0 0 16px 0;">Your SAT Study Planner account is ready. After purchasing access, you’ll choose your scores, test date, prep books, and weekly availability to build a day-by-day plan.</p>
+      <div style="margin:24px 0 8px 0;">${button(`${siteUrl}/sat-planner`, "View the SAT Planner")}</div>
+    `,
+  });
+  const text = [
+    `Welcome, ${name}.`,
+    "",
+    "Your SAT Study Planner account is ready.",
+    `View the SAT Planner: ${siteUrl}/sat-planner`,
+  ].join("\n");
+  return { subject, html, text };
+}
+
+export function satPlannerPurchaseEmail({
+  siteUrl,
+  amount,
+  currency,
+}: {
+  siteUrl: string;
+  amount: number;
+  currency: string;
+}): { subject: string; html: string; text: string } {
+  const price = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.toUpperCase(),
+  }).format(amount / 100);
+  const subject = "Your SAT Study Planner purchase is confirmed";
+  const html = shell({
+    siteUrl,
+    previewText: "Payment confirmed — your SAT Study Planner is unlocked.",
+    body: `
+      <h1 style="font-size:24px;line-height:1.25;margin:0 0 16px 0;color:#171717;">Your planner is unlocked.</h1>
+      <p style="margin:0 0 16px 0;">We confirmed your one-time ${escape(price)} payment. You now have access to onboarding, your generated roadmap, practice-test tracking, and the mistake journal.</p>
+      <div style="margin:24px 0 8px 0;">${button(`${siteUrl}/planner`, "Build My Study Plan")}</div>
+    `,
+  });
+  const text = [
+    "Your planner is unlocked.",
+    "",
+    `We confirmed your one-time ${price} payment.`,
+    `Build your study plan: ${siteUrl}/planner`,
+  ].join("\n");
+  return { subject, html, text };
+}
+
+export function satPlannerPlanReadyEmail({
+  siteUrl,
+  testDate,
+  assignmentCount,
+}: {
+  siteUrl: string;
+  testDate: string;
+  assignmentCount: number;
+}): { subject: string; html: string; text: string } {
+  const subject = "Your SAT study plan is ready";
+  const html = shell({
+    siteUrl,
+    previewText: "Your personalized SAT roadmap is active.",
+    body: `
+      <h1 style="font-size:24px;line-height:1.25;margin:0 0 16px 0;color:#171717;">Your plan is active.</h1>
+      <p style="margin:0 0 16px 0;">Your roadmap contains ${assignmentCount} assignments through your SAT date of ${escape(testDate)}. Missed work stays in Catch-Up without moving future dates.</p>
+      <div style="margin:24px 0 8px 0;">${button(`${siteUrl}/planner`, "Open My Dashboard")}</div>
+    `,
+  });
+  const text = [
+    "Your plan is active.",
+    "",
+    `Assignments: ${assignmentCount}`,
+    `SAT date: ${testDate}`,
+    `Open your dashboard: ${siteUrl}/planner`,
+  ].join("\n");
+  return { subject, html, text };
+}

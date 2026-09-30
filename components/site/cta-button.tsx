@@ -19,11 +19,11 @@ type CtaButtonProps = {
 
 const variantStyles: Record<CtaVariant, string> = {
   primary:
-    "bg-foreground text-background hover:bg-foreground/90 shadow-sm shadow-foreground/10",
+    "bg-foreground text-background hover:bg-brand shadow-sm shadow-foreground/10",
   secondary:
-    "bg-background text-foreground border border-foreground/15 hover:bg-muted",
+    "bg-background text-foreground border border-foreground/20 hover:border-brand/45 hover:text-brand",
   ghost:
-    "bg-transparent text-foreground hover:bg-muted",
+    "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
 };
 
 const sizeStyles: Record<CtaSize, string> = {
@@ -41,7 +41,7 @@ export function CtaButton({
   showArrow = true,
 }: CtaButtonProps) {
   const classes = cn(
-    "group/cta inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-tight transition-all outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50",
+    "group/cta inline-flex items-center justify-center gap-2 rounded-md font-medium tracking-tight transition-all outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50",
     variantStyles[variant],
     sizeStyles[size],
     className

@@ -3,397 +3,505 @@ import Link from "next/link";
 import {
   ArrowRightIcon,
   ArrowUpRightIcon,
-  CompassIcon,
-  CpuIcon,
-  MusicIcon,
-  TrendingUpIcon,
-  UsersIcon,
-  VideoIcon,
+  BriefcaseBusinessIcon,
+  GraduationCapIcon,
+  MailIcon,
+  Music2Icon,
+  PlayIcon,
 } from "lucide-react";
 
-import { Section } from "@/components/site/section";
-import { CtaButton } from "@/components/site/cta-button";
-import { ProofCard } from "@/components/site/proof-card";
 import {
-  disclaimer,
-  getPathwayBookingUrl,
-  siteConfig,
-} from "@/lib/site-config";
+  GithubBrandIcon,
+  LinkedinBrandIcon,
+  YoutubeBrandIcon,
+} from "@/components/site/brand-icons";
+import { CtaButton } from "@/components/site/cta-button";
+import { Section } from "@/components/site/section";
+import { SectionHeader } from "@/components/site/section-header";
+import {
+  featuredProjects,
+  getProjectStatusClass,
+} from "@/lib/portfolio/projects";
+import { siteConfig } from "@/lib/site-config";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: { absolute: "Emmett Funston" },
+  title: { absolute: "Emmett Funston — Digital Hardware Engineer" },
   description:
-    "Northwestern EE student helping ambitious students improve SAT scores, build stronger college applications, and pursue serious academic and career goals.",
+    "Electrical Engineering student at Northwestern building digital hardware across RTL, ASIC physical design, FPGA, embedded systems, and PCBs.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Emmett Funston",
+    title: "Emmett Funston — Digital Hardware Engineer",
     description:
-      "Northwestern EE student helping ambitious students improve SAT scores, build stronger college applications, and pursue serious academic and career goals.",
+      "Electrical Engineering at Northwestern. FPGA, ASIC/VLSI, RTL, embedded hardware, and PCB design.",
     url: siteConfig.url,
     type: "website",
   },
 };
 
-const proofResultDisclaimer =
-  "Results are not guarantees. They show the type of focused, ambitious student this system is designed for.";
+const stackLayers = [
+  { index: "01", label: "Transistors", detail: "SRAM · CMOS · Spectre" },
+  { index: "02", label: "RTL", detail: "Verilog · MAC arrays" },
+  { index: "03", label: "FPGA / ASIC", detail: "Vivado · Innovus" },
+  { index: "04", label: "PCB", detail: "Altium · KiCad · Power" },
+  { index: "05", label: "System", detail: "STM32 · CAN · Ethernet" },
+];
 
-const helpWith = [
+const experience = [
   {
-    icon: TrendingUpIcon,
-    title: "SAT Score Improvement",
-    body: "A focused system to move ambitious scorers from the 1300s into the 1500s with disciplined practice, not busywork.",
+    period: "2026",
+    company: "Schneider Electric / ASCO Power Technologies",
+    role: "Engineering Intern",
+    summary:
+      "Analyzed one-line diagrams, specifications, and application requirements for automatic transfer switches and power-control systems; explored engineering workflow automation.",
+    skills: ["Power Systems", "One-Lines", "Application Engineering"],
   },
   {
-    icon: CompassIcon,
-    title: "Elite College Application Strategy",
-    body: "Positioning, essays, and activity narratives designed to stand out at selective schools and engineering programs.",
+    period: "2024",
+    company: "Bambeck Systems",
+    role: "Electrical Engineering Intern",
+    summary:
+      "Troubleshot, repaired, aligned, and calibrated industrial quantum-cascade-laser gas analyzers in the field, supported by C++ control software and Python logging tools.",
+    skills: ["Instrumentation", "C++", "Python", "Field Engineering"],
   },
   {
-    icon: UsersIcon,
-    title: "1-on-1 Mentorship",
-    body: "Direct private mentor calls for targeted essay feedback, strategy sessions, and honest guidance.",
-  },
-  {
-    icon: CpuIcon,
-    title: "EE / Projects / Career Portfolio",
-    body: "Electrical engineering work from Northwestern — projects, hardware, and career thinking as it takes shape.",
-  },
-  {
-    icon: VideoIcon,
-    title: "Content / YouTube",
-    body: "Essays, breakdowns, and videos on SAT prep, selective admissions, and the mindset of ambitious students.",
-  },
-  {
-    icon: MusicIcon,
-    title: "Drums",
-    body: "The other discipline that keeps the mind sharp. Recordings and practice clips coming soon.",
+    period: "Current",
+    company: "Formula SAE Electric",
+    role: "Embedded Electronics",
+    summary:
+      "Designed STM32 and CAN-based vehicle electronics spanning mixed-signal sensing, multi-rail power, PCB layout, firmware, and board bring-up.",
+    skills: ["STM32", "CAN", "Altium", "Embedded C++"],
   },
 ];
 
-const personalLinks = [
+const skillGroups = [
   {
-    title: "Projects",
-    href: "/projects",
-    body: "Engineering work, coaching, and side experiments.",
+    title: "Digital Hardware",
+    items: ["Verilog", "RTL design", "Testbenches", "Synthesis", "Timing analysis", "Hardware acceleration"],
   },
   {
-    title: "Resume",
-    href: "/resume",
-    body: "Background, education, and highlights.",
+    title: "Semiconductor / VLSI",
+    items: ["Virtuoso", "Spectre", "Innovus", "SRAM", "Physical design", "CTS", "DRC / LVS"],
   },
   {
-    title: "Content",
-    href: "/content",
-    body: "Essays, breakdowns, and short videos.",
+    title: "Embedded / FPGA",
+    items: ["STM32", "RP2350", "Artix-7", "C / C++", "Vivado", "Firmware", "Board bring-up"],
   },
   {
-    title: "Drums",
-    href: "/drums",
-    body: "Practice clips and playing.",
+    title: "PCB / Interfaces",
+    items: ["KiCad", "Altium", "CAN", "I2C", "SPI", "UART", "Ethernet", "MQTT"],
   },
 ];
 
 export default function HomePage() {
-  const pathwayBookingUrl = getPathwayBookingUrl();
-
   return (
     <>
-      {/* Hero */}
-      <Section spacing="xl" container="xl" className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(80%_50%_at_50%_-10%,color-mix(in_oklch,var(--foreground)_8%,transparent),transparent_70%)]"
-        />
-        <div className="flex flex-col gap-8">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-foreground/10 bg-background/80 px-3 py-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            <span className="size-1.5 rounded-full bg-emerald-500" />
-            Northwestern EE · SAT & Admissions Coach
-          </span>
+      <Section spacing="xl" container="xl" className="overflow-hidden">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1.3fr)_minmax(18rem,0.7fr)] lg:items-end">
+          <div>
+            <p className="font-mono text-[11px] font-medium tracking-[0.2em] text-brand uppercase">
+              Electrical Engineering · Northwestern University
+            </p>
+            <h1 className="mt-6 max-w-5xl font-heading text-[clamp(4.4rem,11vw,9rem)] leading-[0.78] tracking-[-0.055em] text-balance">
+              Emmett
+              <br />
+              Funston
+            </h1>
+          </div>
+          <div className="border-t border-foreground/15 pt-6">
+            <p className="text-xl leading-snug font-medium text-foreground sm:text-2xl">
+              Digital Hardware
+              <br />
+              FPGA · ASIC/VLSI
+            </p>
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
+              I design hardware across the stack—from transistor-level circuits
+              and RTL to PCBs, firmware, and complete embedded systems.
+            </p>
+          </div>
+        </div>
 
-          <h1 className="font-heading max-w-4xl text-5xl leading-[0.98] font-semibold tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[88px]">
-            Emmett Funston
-          </h1>
-
-          <p className="max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-            Northwestern EE student helping ambitious students improve SAT scores, build stronger college applications, and pursue serious academic and career goals.
-          </p>
-
-          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:flex-wrap">
-            <CtaButton
-              href="/sat-admissions"
-              variant="primary"
-              size="lg"
-            >
-              View SAT &amp; Admissions Packages
+        <div className="mt-14 flex flex-col gap-4 border-t border-foreground/12 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <CtaButton href="/projects" size="lg">
+              View selected work
             </CtaButton>
-            <CtaButton
-              href="/sat-admissions/workshop"
-              variant="secondary"
-              size="lg"
-            >
-              Register for Free Workshop
+            <CtaButton href="/resume" size="lg" variant="secondary">
+              Resume
             </CtaButton>
-            <CtaButton
-              href={pathwayBookingUrl}
-              variant="ghost"
-              size="lg"
-              external
-            >
-              Book a 1-on-1 Call
-            </CtaButton>
+          </div>
+          <div className="flex items-center gap-5">
+            <SocialLink href={siteConfig.github} label="GitHub" Icon={GithubBrandIcon} />
+            <SocialLink href={siteConfig.linkedin} label="LinkedIn" Icon={LinkedinBrandIcon} />
           </div>
         </div>
       </Section>
 
-      {/* 1. Proof */}
-      <Section spacing="lg" container="xl" muted>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="max-w-xl">
-            <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">
-              Proof
-            </span>
-            <h2 className="mt-2 font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Real score jumps. Real admissions.
-            </h2>
-          </div>
-          <CtaButton
-            href="/sat-admissions/proof"
-            variant="ghost"
-            size="md"
-            className="w-fit"
-          >
-            See full proof
-          </CtaButton>
-        </div>
-
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          <ProofCard
-            student="Emmett (Founder)"
-            context="Self-coached with the same system"
-            before={1390}
-            after={1510}
-            outcome="1390 → 1510 SAT. Broke into the 1500s and used the extra points to unlock Northwestern Engineering."
-            featured
-          />
-          <ProofCard
-            student="Emmett's brother"
-            context="Admitted ED to Northwestern Engineering"
-            before={1480}
-            after={1540}
-            outcome="1480 → 1540 + Northwestern Engineering ED. Sharpened the last 60 points and executed a decisive Early Decision application."
-          />
-          <ProofCard
-            student="Coached student"
-            context="Same method, repeated on a student"
-            before={1390}
-            after={1510}
-            outcome="1390 → 1510 Student Result. Repeatable 120-point improvement — not a one-off."
-          />
-        </div>
-
-        <p className="mt-8 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          {proofResultDisclaimer}
+      <Section spacing="md" container="xl" tone="contrast">
+        <p className="font-mono text-[10px] tracking-[0.18em] text-background/45 uppercase">
+          Hardware stack
         </p>
-      </Section>
-
-      {/* 2. About */}
-      <Section spacing="lg" container="xl">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:items-start">
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">
-              About
-            </span>
-            <h2 className="font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Built from experience,
-              <br className="hidden sm:block" />
-              not theory.
-            </h2>
-          </div>
-          <div className="flex flex-col gap-6">
-            <p className="text-lg leading-relaxed text-foreground/85">
-              I&apos;m Emmett, an Electrical Engineering student at Northwestern University. I built my SAT/admissions approach after experiencing firsthand how much faster students can improve when they stop studying randomly and start using a focused system.
-            </p>
-            <div className="flex flex-col gap-3 border-l-2 border-foreground/15 pl-6">
-              <p className="text-sm text-muted-foreground">
-                Northwestern University · McCormick School of Engineering
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Coaching a small, selective group of ambitious students each cycle.
-              </p>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* 3. What I help with */}
-      <Section spacing="lg" container="xl" muted>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="max-w-xl">
-            <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">
-              What I help with
-            </span>
-            <h2 className="mt-2 font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              A focused set of things I take seriously.
-            </h2>
-          </div>
-        </div>
-
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {helpWith.map((h) => {
-            const Icon = h.icon;
-            return (
-              <article
-                key={h.title}
-                className="flex flex-col gap-4 rounded-2xl border border-foreground/10 bg-background p-6 transition-shadow hover:shadow-md"
-              >
-                <span
+        <div className="mt-6 grid divide-y divide-background/15 border-y border-background/15 sm:grid-cols-5 sm:divide-x sm:divide-y-0">
+          {stackLayers.map((layer, index) => (
+            <div key={layer.label} className="group relative px-4 py-6 first:pl-0 sm:py-8">
+              <span className="font-mono text-[10px] text-background/35">{layer.index}</span>
+              <h2 className="mt-5 text-lg font-semibold text-background">{layer.label}</h2>
+              <p className="mt-1 text-xs text-background/50">{layer.detail}</p>
+              {index < stackLayers.length - 1 ? (
+                <ArrowRightIcon
+                  className="absolute top-1/2 right-0 hidden size-4 -translate-y-1/2 translate-x-1/2 text-background/30 sm:block"
                   aria-hidden
-                  className="grid size-10 place-items-center rounded-xl bg-foreground/[0.06] text-foreground"
-                >
-                  <Icon className="size-5" />
-                </span>
-                <h3 className="font-heading text-base font-semibold tracking-tight text-foreground">
-                  {h.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {h.body}
-                </p>
-              </article>
-            );
-          })}
-        </div>
-      </Section>
-
-      {/* 4. Featured SAT & Admissions */}
-      <Section spacing="lg" container="xl">
-        <div className="grid gap-10 rounded-3xl border border-foreground/10 bg-background p-8 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:p-12">
-          <div className="flex flex-col gap-5">
-            <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">
-              Featured · SAT & Admissions
-            </span>
-            <h2 className="font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              The SAT & Admissions program
-            </h2>
-            <p className="text-muted-foreground">
-              A serious, selective coaching program for ambitious high schoolers. Weekly accountability, a real SAT system, and college applications built to be memorable at selective schools. Intake-only — students apply first.
-            </p>
-            <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-              <CtaButton
-                href="/sat-admissions"
-                variant="primary"
-                size="lg"
-              >
-                Explore the program
-              </CtaButton>
-              <CtaButton
-                href="/sat-admissions/packages"
-                variant="secondary"
-                size="lg"
-              >
-                See packages
-              </CtaButton>
+                />
+              ) : null}
             </div>
-          </div>
-
-          <ul className="grid gap-3">
-            {[
-              "Structured SAT prep, not busywork",
-              "Weekly accountability with Emmett",
-              "College list, essay, and activities strategy",
-              "Selective intake — small cohort each cycle",
-            ].map((item) => (
-              <li
-                key={item}
-                className="flex items-start gap-3 rounded-xl border border-foreground/10 bg-muted/40 p-4 text-sm text-foreground/85"
-              >
-                <ArrowRightIcon className="mt-0.5 size-4 shrink-0 text-foreground" />
-                {item}
-              </li>
-            ))}
-          </ul>
+          ))}
         </div>
       </Section>
 
-      {/* 5. Personal links */}
-      <Section spacing="lg" container="xl" muted>
-        <div className="flex flex-col gap-3">
-          <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">
-            More of me
-          </span>
-          <h2 className="font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Beyond coaching.
-          </h2>
-        </div>
+      <Section spacing="xl" container="xl">
+        <SectionHeader
+          eyebrow="Selected work"
+          title="Hardware, carried through."
+          description="Projects are ordered by relevance to digital design, semiconductor engineering, and system-level hardware. In-progress work is labeled explicitly."
+          action={
+            <CtaButton href="/projects" variant="ghost">
+              View all projects
+            </CtaButton>
+          }
+        />
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {personalLinks.map((link) => (
+        <div className="grid gap-px overflow-hidden rounded-xl border border-foreground/12 bg-foreground/12 lg:grid-cols-2">
+          {featuredProjects.map((project, index) => (
             <Link
-              key={link.href}
-              href={link.href}
-              className="group flex flex-col gap-3 rounded-2xl border border-foreground/10 bg-background p-6 transition-shadow hover:shadow-md"
+              key={project.slug}
+              href={`/projects/${project.slug}`}
+              className={cn(
+                "group relative flex min-h-[22rem] flex-col bg-card p-7 transition-colors hover:bg-accent/65 sm:p-9",
+                index === 0 && "lg:col-span-2 lg:min-h-[26rem]"
+              )}
             >
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="font-heading text-lg font-semibold tracking-tight text-foreground">
-                  {link.title}
-                </h3>
-                <ArrowUpRightIcon className="size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
+              <div className="flex items-start justify-between gap-4">
+                <p className="font-mono text-[10px] tracking-[0.16em] text-brand uppercase">
+                  {project.category}
+                </p>
+                <span
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 font-mono text-[9px] tracking-wider uppercase",
+                    getProjectStatusClass(project.status)
+                  )}
+                >
+                  {project.status}
+                </span>
               </div>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {link.body}
-              </p>
+              <div className="technical-grid my-8 flex flex-1 items-center justify-center rounded-lg border border-foreground/10 bg-muted/35 p-6">
+                <div className="flex w-full max-w-2xl items-center">
+                  {project.diagram.map((node, nodeIndex) => (
+                    <div key={node} className="contents">
+                      <span className="flex min-h-16 flex-1 items-center justify-center rounded border border-foreground/15 bg-background/90 px-2 text-center font-mono text-[9px] tracking-wide text-foreground/70 uppercase">
+                        {node}
+                      </span>
+                      {nodeIndex < project.diagram.length - 1 ? (
+                        <span className="h-px min-w-3 flex-1 bg-brand/40" aria-hidden />
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-end justify-between gap-5">
+                <div>
+                  <h3
+                    className={cn(
+                      "font-heading leading-none tracking-[-0.025em] text-foreground",
+                      index === 0 ? "text-4xl sm:text-5xl" : "text-3xl"
+                    )}
+                  >
+                    {project.shortTitle}
+                  </h3>
+                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                    {project.summary}
+                  </p>
+                </div>
+                <ArrowUpRightIcon className="size-5 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-brand" />
+              </div>
             </Link>
           ))}
         </div>
       </Section>
 
-      {/* 6. Final CTA */}
-      <Section spacing="lg" container="xl">
-        <div className="rounded-3xl bg-foreground p-8 text-background sm:p-14">
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-end">
-            <div className="flex flex-col gap-4">
-              <span className="text-xs font-semibold tracking-widest uppercase text-background/60">
-                Ready when you are
-              </span>
-              <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
-                Want help with SAT strategy or college applications?
-              </h2>
-              <p className="max-w-xl text-background/80">
-                Apply to the cohort, watch the free workshop, or book a private 1-on-1 mentor call. All three paths start below.
+      <Section id="experience" spacing="xl" container="xl" tone="band">
+        <SectionHeader
+          eyebrow="Experience"
+          title="Engineering in the field."
+          description="Semiconductor coursework and project depth paired with industrial instrumentation, power-system applications, and vehicle electronics."
+        />
+        <div className="border-t border-foreground/12">
+          {experience.map((item) => (
+            <article
+              key={item.company}
+              className="grid gap-4 border-b border-foreground/12 py-7 md:grid-cols-[8rem_1fr_1.3fr] md:gap-8"
+            >
+              <p className="font-mono text-[10px] tracking-wider text-brand uppercase">
+                {item.period}
+              </p>
+              <div>
+                <h3 className="text-base font-semibold text-foreground">{item.company}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{item.role}</p>
+              </div>
+              <div>
+                <p className="text-sm leading-relaxed text-foreground/75">{item.summary}</p>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {item.skills.map((skill) => (
+                    <li key={skill} className="font-mono text-[9px] tracking-wide text-muted-foreground uppercase">
+                      {skill}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="about" spacing="xl" container="xl">
+        <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr]">
+          <div className="technical-grid flex min-h-[28rem] flex-col justify-between rounded-xl border border-foreground/12 bg-foreground p-7 text-background">
+            <GraduationCapIcon className="size-8 text-background/65" aria-hidden />
+            <div>
+              <p className="font-mono text-[10px] tracking-[0.16em] text-background/45 uppercase">
+                Education
+              </p>
+              <p className="mt-3 font-heading text-4xl leading-none">
+                Northwestern University
+              </p>
+              <p className="mt-4 text-sm text-background/65">
+                B.S. Electrical Engineering · Expected June 2028
+                <br />
+                Planned continuation into the combined B.S./M.S. program
               </p>
             </div>
-            <div className="flex flex-col gap-3">
-              <CtaButton
-                href="/sat-admissions/apply"
-                variant="secondary"
-                size="lg"
-                className="border-transparent bg-background text-foreground hover:bg-background/90"
-              >
-                Apply to the Cohort
-              </CtaButton>
-              <CtaButton
-                href="/sat-admissions/workshop"
-                variant="ghost"
-                size="lg"
-                className="border border-background/25 text-background hover:bg-background/10"
-              >
-                Register for Free Workshop
-              </CtaButton>
-              <CtaButton
-                href={pathwayBookingUrl}
-                variant="ghost"
-                size="lg"
-                external
-                className="border border-background/25 text-background hover:bg-background/10"
-              >
-                Book 1-on-1
-              </CtaButton>
-            </div>
           </div>
-          <p className="mt-10 max-w-3xl border-t border-background/15 pt-6 text-xs leading-relaxed text-background/60">
-            {disclaimer}
-          </p>
+          <div className="flex flex-col justify-between">
+            <div>
+              <p className="font-mono text-[11px] tracking-[0.18em] text-brand uppercase">
+                About
+              </p>
+              <h2 className="mt-5 max-w-3xl font-heading text-5xl leading-[0.98] tracking-[-0.03em] text-balance sm:text-6xl">
+                From architecture and circuits to working hardware.
+              </h2>
+              <div className="mt-8 max-w-2xl space-y-5 text-base leading-relaxed text-muted-foreground">
+                <p>
+                  I&apos;m an Electrical Engineering student at Northwestern focused on
+                  digital hardware and semiconductor design. My work spans SRAM,
+                  Verilog accelerators, ASIC physical design, FPGA systems, embedded
+                  electronics, and PCBs.
+                </p>
+                <p>
+                  I&apos;m most interested in roles where performance, power,
+                  reliability, and hardware/software interaction are measurable
+                  engineering constraints—especially in semiconductor computing,
+                  defense, aerospace, and high-performance systems.
+                </p>
+                <p>
+                  Long term, I hope to combine deep semiconductor expertise with
+                  entrepreneurship to build advanced hardware technologies.
+                </p>
+              </div>
+            </div>
+            <p className="mt-10 border-t border-foreground/12 pt-5 text-sm text-muted-foreground">
+              Previously attended UC Santa Barbara before transferring to Northwestern.
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="stack" spacing="xl" container="xl" tone="band">
+        <SectionHeader
+          eyebrow="Technical stack"
+          title="Tools organized by the work."
+          description="The focus is digital hardware and semiconductor implementation—not a wall of unrelated logos."
+        />
+        <div className="grid gap-px overflow-hidden rounded-xl border border-foreground/12 bg-foreground/12 md:grid-cols-2">
+          {skillGroups.map((group, index) => (
+            <article key={group.title} className="bg-card p-7">
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-[10px] text-brand">0{index + 1}</span>
+                <h3 className="text-base font-semibold">{group.title}</h3>
+              </div>
+              <ul className="mt-6 flex flex-wrap gap-2">
+                {group.items.map((item) => (
+                  <li
+                    key={item}
+                    className="rounded border border-foreground/10 bg-muted/55 px-2.5 py-1.5 text-xs text-foreground/70"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      <Section spacing="xl" container="xl">
+        <SectionHeader
+          eyebrow="Media"
+          title="Technical ideas, explained clearly."
+          description="YouTube videos on engineering, math, science, learning, and student life—kept secondary to the engineering work."
+          action={
+            <CtaButton href={siteConfig.youtube} external variant="secondary">
+              Visit YouTube
+            </CtaButton>
+          }
+        />
+        <a
+          href={siteConfig.youtube}
+          target="_blank"
+          rel="noreferrer"
+          className="group grid overflow-hidden rounded-xl border border-foreground/12 bg-card md:grid-cols-[1.1fr_0.9fr]"
+        >
+          <div className="technical-grid flex min-h-72 items-center justify-center bg-foreground text-background">
+            <span className="grid size-16 place-items-center rounded-full border border-background/25 transition-transform group-hover:scale-105">
+              <PlayIcon className="ml-1 size-5 fill-current" aria-hidden />
+            </span>
+          </div>
+          <div className="flex flex-col justify-between p-7 sm:p-9">
+            <div>
+              <p className="font-mono text-[10px] tracking-wider text-brand uppercase">
+                Featured video
+              </p>
+              <h3 className="mt-4 font-heading text-4xl leading-none tracking-tight">
+                Did AI Just Solve this $1 MILLION Math Problem?
+              </h3>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                The Navier–Stokes existence and smoothness problem, AI-assisted
+                mathematical research, fluid dynamics, and what a claimed solution
+                would actually mean.
+              </p>
+            </div>
+            <span className="mt-8 inline-flex items-center gap-2 text-sm font-medium">
+              Watch on YouTube
+              <ArrowUpRightIcon className="size-4" />
+            </span>
+          </div>
+        </a>
+      </Section>
+
+      <Section spacing="xl" container="xl" tone="contrast">
+        <div className="grid gap-12 lg:grid-cols-2">
+          <div>
+            <p className="font-mono text-[10px] tracking-[0.18em] text-background/45 uppercase">
+              Outside engineering
+            </p>
+            <h2 className="mt-5 font-heading text-5xl leading-none tracking-tight text-background">
+              Rhythm, framing, and a life beyond the bench.
+            </h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <PersonalCard
+              href="/drums"
+              Icon={Music2Icon}
+              title="Drumming"
+              body="10+ years behind the kit, plus marching, Drum Major, and section leadership experience."
+            />
+            <PersonalCard
+              href="/content"
+              Icon={YoutubeBrandIcon}
+              title="Media"
+              body="Engineering, math, science, education, technology, and the process of learning in public."
+            />
+          </div>
+        </div>
+      </Section>
+
+      <Section spacing="xl" container="xl">
+        <div className="grid gap-8 rounded-xl border border-foreground/12 bg-card p-7 md:grid-cols-[1fr_auto] md:items-end sm:p-10">
+          <div>
+            <p className="font-mono text-[10px] tracking-[0.18em] text-brand uppercase">
+              Contact
+            </p>
+            <h2 className="mt-4 max-w-3xl font-heading text-5xl leading-none tracking-tight">
+              Building digital hardware that has to work.
+            </h2>
+            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              I&apos;m interested in internship and early-career opportunities across
+              FPGA, ASIC/VLSI, digital design, embedded hardware, defense, aerospace,
+              and high-performance computing systems.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row md:flex-col">
+            <CtaButton href={`mailto:${siteConfig.email}`} size="lg" showArrow={false}>
+              <MailIcon className="size-4" />
+              Email me
+            </CtaButton>
+            <CtaButton href="/resume" size="lg" variant="secondary">
+              View resume
+            </CtaButton>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-5 border-t border-foreground/12 pt-6 md:grid-cols-[1fr_auto] md:items-center">
+          <div>
+            <p className="flex items-center gap-2 text-sm font-semibold">
+              <BriefcaseBusinessIcon className="size-4 text-brand" />
+              SAT &amp; Admissions Coaching
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              I also run a focused coaching program for ambitious students. It has
+              its own section and remains separate from the engineering portfolio.
+            </p>
+          </div>
+          <CtaButton href="/sat-admissions" variant="ghost">
+            Visit coaching
+          </CtaButton>
         </div>
       </Section>
     </>
+  );
+}
+
+function SocialLink({
+  href,
+  label,
+  Icon,
+}: {
+  href: string;
+  label: string;
+  Icon: React.ComponentType<{ className?: string }>;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-brand"
+    >
+      <Icon className="size-4" />
+      {label}
+      <ArrowUpRightIcon className="size-3" />
+    </a>
+  );
+}
+
+function PersonalCard({
+  href,
+  Icon,
+  title,
+  body,
+}: {
+  href: string;
+  Icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  body: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group rounded-lg border border-background/15 p-5 transition-colors hover:bg-background/8"
+    >
+      <Icon className="size-5 text-background/55" aria-hidden />
+      <h3 className="mt-8 text-base font-semibold text-background">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-background/55">{body}</p>
+      <ArrowUpRightIcon className="mt-6 size-4 text-background/45 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+    </Link>
   );
 }

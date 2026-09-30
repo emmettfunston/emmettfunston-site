@@ -7,7 +7,7 @@
 -- MUST replace:
 --   * book titles (currently "SAT Math Book" etc.)
 --   * book descriptions
---   * affiliate URLs (currently https://example.com/...)
+--   * affiliate URLs if the recommended resources change
 --   * chapter counts and chapter titles (currently "Math Chapter N (PLACEHOLDER)")
 -- with the real prep books and their actual tables of contents.
 --
@@ -40,7 +40,7 @@ set name         = excluded.name,
     active       = excluded.active;
 
 -- -----------------------------------------------------------------------------
--- Books (PLACEHOLDERS — replace titles/descriptions/affiliate URLs).
+-- Books (titles, descriptions, and chapters remain placeholders).
 -- -----------------------------------------------------------------------------
 insert into public.books (slug, title, category, description, affiliate_url, active)
 values
@@ -49,7 +49,7 @@ values
         'SAT Math Book (PLACEHOLDER)',
         'math',
         'PLACEHOLDER — replace with the real Math prep book title and description before launch.',
-        'https://example.com/replace-with-math-book-affiliate-link',
+        'https://amzn.to/4kekzFy',
         true
     ),
     (
@@ -57,7 +57,7 @@ values
         'SAT Grammar Book (PLACEHOLDER)',
         'grammar',
         'PLACEHOLDER — replace with the real Grammar/Writing prep book title and description before launch.',
-        'https://example.com/replace-with-grammar-book-affiliate-link',
+        'https://amzn.to/42QYkjc',
         true
     ),
     (
@@ -65,7 +65,7 @@ values
         'SAT Reading Book (PLACEHOLDER)',
         'reading',
         'PLACEHOLDER — replace with the real Reading prep book title and description before launch.',
-        'https://example.com/replace-with-reading-book-affiliate-link',
+        'https://amzn.to/43mqfaH',
         true
     )
 on conflict (slug) do update

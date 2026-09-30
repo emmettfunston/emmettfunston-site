@@ -12,6 +12,7 @@ import {
 } from "@/lib/schemas/auth";
 
 import { AUTH_IDLE_STATE, type AuthActionState } from "@/lib/auth/form-state";
+import { sendSatPlannerWelcomeEmail } from "@/lib/email/send";
 
 function fieldErrorsFromZod(issues: { path: PropertyKey[]; message: string }[]) {
   const fieldErrors: Record<string, string> = {};
@@ -85,6 +86,16 @@ export async function signUp(
       ...AUTH_IDLE_STATE,
       error: error.message || "Could not create your account. Please try again.",
     };
+  }
+
+  // Supabase may return an obfuscated user for an existing email; only send a
+  // welcome email when a new identity was actually created.
+  if (data.user?.identities && data.user.identities.length > 0) {
+    await sendSatPlannerWelcomeEmail({
+      userId: data.user.id,
+      email: parsed.data.email,
+      displayName: parsed.data.displayName,
+    });
   }
 
   // When email confirmation is enabled, no session exists yet.

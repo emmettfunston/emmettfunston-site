@@ -25,7 +25,7 @@ export function PageHeader({
       spacing="lg"
       container="xl"
       className={cn(
-        "border-b bg-gradient-to-b from-muted/40 to-background",
+        "border-b border-foreground/10 bg-background",
         className
       )}
     >
@@ -36,17 +36,17 @@ export function PageHeader({
         )}
       >
         {eyebrow ? (
-          <span className="inline-flex items-center gap-2 rounded-full border border-foreground/10 bg-background/60 px-3 py-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+          <span className="font-mono text-[11px] font-medium tracking-[0.18em] text-brand uppercase">
             {eyebrow}
           </span>
         ) : null}
-        <h1 className="font-heading max-w-4xl text-4xl leading-[1.05] font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+        <h1 className="font-heading max-w-5xl text-5xl leading-[0.95] tracking-[-0.035em] text-balance text-foreground sm:text-6xl md:text-7xl">
           {title}
         </h1>
         {description ? (
           <p
             className={cn(
-              "max-w-2xl text-base text-muted-foreground sm:text-lg",
+              "max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg",
               align === "center" && "mx-auto"
             )}
           >

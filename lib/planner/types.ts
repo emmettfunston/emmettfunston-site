@@ -130,6 +130,7 @@ export type PlannerBook = {
   slug: string;
   title: string;
   category: BookCategory;
+  affiliateUrl?: string | null;
   chapters: readonly PlannerChapter[];
 };
 

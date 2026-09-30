@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
-import { getPathwayBookingUrl } from "@/lib/site-config";
 
 /**
  * Layout for the public/marketing surface of the site.
@@ -14,13 +13,11 @@ export default function MarketingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathwayBookingUrl = getPathwayBookingUrl();
-
   return (
     <>
-      <Navbar pathwayBookingUrl={pathwayBookingUrl} />
+      <Navbar />
       <main className="flex-1">{children}</main>
-      <Footer pathwayBookingUrl={pathwayBookingUrl} />
+      <Footer />
     </>
   );
 }

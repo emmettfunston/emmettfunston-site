@@ -1,11 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, ExternalLinkIcon } from "lucide-react";
 
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { SupabasePublicEnvMissingError } from "@/lib/supabase/config";
+import { SAT_RESOURCES } from "@/lib/planner/resources";
 import type { Tables } from "@/lib/supabase/database.types";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { SubmitButton } from "@/components/auth/submit-button";
+import { startSatPlannerCheckout } from "./actions";
 import {
   Card,
   CardContent,
@@ -31,6 +34,7 @@ const FEATURES = [
 async function loadProduct(): Promise<{
   product: Tables<"products"> | null;
   signedIn: boolean;
+  hasAccess: boolean;
 }> {
   try {
     const supabase = await getSupabaseServerClient();
@@ -44,11 +48,27 @@ async function loadProduct(): Promise<{
           `${error.hint ? ` (hint: ${error.hint})` : ""}`
       );
     }
-    return { product: product ?? null, signedIn: userData.user !== null };
+    const user = userData.user;
+    let hasAccess = false;
+    if (user) {
+      const { data, error: accessError } = await supabase.rpc(
+        "has_sat_planner_access",
+        { p_user_id: user.id }
+      );
+      if (accessError) {
+        console.error("[sat-planner] access check failed:", accessError.message);
+      }
+      hasAccess = data === true;
+    }
+    return {
+      product: product ?? null,
+      signedIn: user !== null,
+      hasAccess,
+    };
   } catch (err) {
     if (err instanceof SupabasePublicEnvMissingError) {
       console.warn(`[sat-planner] ${err.message}`);
-      return { product: null, signedIn: false };
+      return { product: null, signedIn: false, hasAccess: false };
     }
     throw err;
   }
@@ -62,8 +82,19 @@ function formatPrice(amountCents: number, currency: string): string {
   }).format(amountCents / 100);
 }
 
-export default async function SatPlannerPage() {
-  const { product, signedIn } = await loadProduct();
+function normalizeMarketingCopy(value: string): string {
+  return value.replaceAll("‚Äî", "—").replaceAll("â€”", "—");
+}
+
+export default async function SatPlannerPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ checkout?: string }>;
+}) {
+  const [{ product, signedIn, hasAccess }, params] = await Promise.all([
+    loadProduct(),
+    searchParams,
+  ]);
 
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-16 sm:px-8">
@@ -75,8 +106,10 @@ export default async function SatPlannerPage() {
           {product?.name ?? "SAT Study Planner"}
         </h1>
         <p className="mx-auto max-w-xl text-muted-foreground">
-          {product?.description ??
-            "A personalized day-by-day SAT study plan: chapter assignments from proven prep books, weekly practice tests, score tracking, and a mistake journal."}
+          {normalizeMarketingCopy(
+            product?.description ??
+              "A personalized day-by-day SAT study plan: chapter assignments from proven prep books, weekly practice tests, score tracking, and a mistake journal."
+          )}
         </p>
       </div>
 
@@ -90,6 +123,20 @@ export default async function SatPlannerPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
+          {params.checkout === "cancelled" ? (
+            <p role="status" className="rounded-lg bg-muted px-3 py-2 text-sm">
+              Checkout was cancelled. You have not been charged.
+            </p>
+          ) : null}
+          {params.checkout === "failed" ||
+          params.checkout === "unavailable" ? (
+            <p
+              role="alert"
+              className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            >
+              Checkout is not available right now. Please try again shortly.
+            </p>
+          ) : null}
           <ul className="flex flex-col gap-2.5">
             {FEATURES.map((feature) => (
               <li key={feature} className="flex items-start gap-2.5 text-sm">
@@ -102,12 +149,33 @@ export default async function SatPlannerPage() {
             ))}
           </ul>
           <div className="flex flex-col gap-2">
-            <Button size="lg" disabled className="h-11 w-full text-base sm:text-sm">
-              Checkout opening soon
-            </Button>
+            {hasAccess ? (
+              <Link
+                href="/planner"
+                className={buttonVariants({
+                  size: "lg",
+                  className: "h-11 w-full text-base sm:text-sm",
+                })}
+              >
+                Open my planner
+              </Link>
+            ) : signedIn ? (
+              <form action={startSatPlannerCheckout}>
+                <SubmitButton>Buy once — start planning</SubmitButton>
+              </form>
+            ) : (
+              <Link
+                href="/signup?next=/sat-planner"
+                className={buttonVariants({
+                  size: "lg",
+                  className: "h-11 w-full text-base sm:text-sm",
+                })}
+              >
+                Create account to purchase
+              </Link>
+            )}
             <p className="text-center text-xs text-muted-foreground">
-              Secure payment is being finalized. {signedIn ? "You're signed in — " : ""}
-              check back shortly.
+              Stripe-hosted secure checkout. No subscription.
             </p>
           </div>
           {!signedIn ? (
@@ -130,6 +198,52 @@ export default async function SatPlannerPage() {
           ) : null}
         </CardContent>
       </Card>
+
+      <section className="mt-16" aria-labelledby="planner-resources">
+        <div className="text-center">
+          <p className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
+            Recommended resources
+          </p>
+          <h2
+            id="planner-resources"
+            className="mt-2 font-heading text-2xl font-semibold tracking-tight"
+          >
+            The books used by this plan
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
+            These are the resources I used and recommend. Your planner assigns
+            chapters from the books you select and reserves Saturdays for full
+            practice exams.
+          </p>
+        </div>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          {SAT_RESOURCES.map((resource) => (
+            <a
+              key={resource.slug}
+              href={resource.url}
+              target="_blank"
+              rel="sponsored noopener noreferrer"
+              className="group rounded-xl border border-foreground/10 p-5 transition-colors hover:border-foreground/25"
+            >
+              <span className="flex items-center justify-between gap-3">
+                <span className="font-heading font-medium">
+                  {resource.label}
+                </span>
+                <ExternalLinkIcon
+                  aria-hidden
+                  className="size-4 text-muted-foreground transition-colors group-hover:text-foreground"
+                />
+              </span>
+              <span className="mt-2 block text-sm text-muted-foreground">
+                {resource.description}
+              </span>
+            </a>
+          ))}
+        </div>
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          As an Amazon Associate I earn from qualifying purchases.
+        </p>
+      </section>
     </div>
   );
 }

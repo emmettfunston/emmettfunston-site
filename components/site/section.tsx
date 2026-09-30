@@ -9,6 +9,8 @@ type SectionProps = React.ComponentProps<"section"> & {
   container?: "sm" | "md" | "lg" | "xl" | "full";
   /** Soft muted background. */
   muted?: boolean;
+  /** Editorial surface treatment. */
+  tone?: "default" | "band" | "contrast";
   /** Optional inner wrapper class. */
   innerClassName?: string;
 };
@@ -34,6 +36,7 @@ export function Section({
   spacing = "md",
   container = "lg",
   muted = false,
+  tone = "default",
   children,
   ...props
 }: SectionProps) {
@@ -41,7 +44,8 @@ export function Section({
     <section
       className={cn(
         "relative w-full",
-        muted && "bg-muted/40",
+        (muted || tone === "band") && "border-y border-foreground/8 bg-muted/55",
+        tone === "contrast" && "bg-foreground text-background",
         spacingMap[spacing],
         className
       )}

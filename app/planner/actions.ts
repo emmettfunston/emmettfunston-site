@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { buildPlanFromInput } from "@/lib/planner/build-from-input";
+import { sendSatPlannerPlanReadyEmail } from "@/lib/email/send";
 import { loadPlannerCatalog } from "@/lib/planner/load-catalog";
 import { recommendBooks } from "@/lib/planner/recommend-books";
 import { requirePlannerAccess } from "@/lib/auth/session";
@@ -12,6 +13,7 @@ import {
   activatePlanSchema,
   mistakeEntrySchema,
   practiceTestEntrySchema,
+  studentScoresSchema,
   toggleAssignmentSchema,
 } from "@/lib/schemas/planner";
 import type { Json, TablesInsert } from "@/lib/supabase/database.types";
@@ -66,13 +68,7 @@ export async function getOnboardingBootstrap(): Promise<ActionResult> {
 
 export async function getBookRecommendations(raw: unknown): Promise<ActionResult> {
   await requirePlannerAccess("/planner/onboarding");
-  const parsed = activatePlanSchema
-    .pick({
-      currentMathScore: true,
-      currentRwScore: true,
-      targetTotalScore: true,
-    })
-    .safeParse(raw);
+  const parsed = studentScoresSchema.safeParse(raw);
   if (!parsed.success) {
     return {
       ok: false,
@@ -274,6 +270,15 @@ export async function activatePlanAction(raw: unknown): Promise<ActionResult> {
   if (profileError) {
     console.error("[planner] mark onboarding complete failed:", profileError);
     // Plan exists — still send them to the dashboard.
+  }
+
+  if (user.email) {
+    await sendSatPlannerPlanReadyEmail({
+      planId: studyPlan.id,
+      email: user.email,
+      testDate: plan.testDate,
+      assignmentCount: rows.length,
+    });
   }
 
   revalidatePath("/planner");

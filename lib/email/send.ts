@@ -10,6 +10,9 @@ import {
   workshopAdminEmail,
   applicationConfirmationEmail,
   applicationAdminEmail,
+  satPlannerPlanReadyEmail,
+  satPlannerPurchaseEmail,
+  satPlannerWelcomeEmail,
 } from "@/lib/email/templates";
 import type { WorkshopRegistrationParsed } from "@/lib/schemas/workshop";
 import type { CohortApplicationParsed } from "@/lib/schemas/apply";
@@ -21,6 +24,8 @@ type SendOne = {
   text: string;
   /** Used for readable server logs when Resend rejects a send. */
   label: string;
+  /** Prevent duplicate transactional sends when webhook/action retries. */
+  idempotencyKey?: string;
 };
 
 /**
@@ -31,14 +36,19 @@ type SendOne = {
 async function sendAll(cfg: EmailConfig, batch: SendOne[]): Promise<void> {
   const results = await Promise.allSettled(
     batch.map(async (msg) => {
-      const { data, error } = await cfg.resend.emails.send({
-        from: cfg.from,
-        to: msg.to,
-        subject: msg.subject,
-        html: msg.html,
-        text: msg.text,
-        replyTo: cfg.adminEmail ?? undefined,
-      });
+      const { data, error } = await cfg.resend.emails.send(
+        {
+          from: cfg.from,
+          to: msg.to,
+          subject: msg.subject,
+          html: msg.html,
+          text: msg.text,
+          replyTo: cfg.adminEmail ?? undefined,
+        },
+        msg.idempotencyKey
+          ? { idempotencyKey: msg.idempotencyKey }
+          : undefined
+      );
       if (error) {
         throw error;
       }
@@ -196,4 +206,87 @@ export async function sendApplicationEmails(
   }
 
   await sendAll(cfg, batch);
+}
+
+async function plannerEmailConfig(): Promise<EmailConfig | null> {
+  try {
+    return getEmailConfig();
+  } catch (err) {
+    if (err instanceof ResendNotConfiguredError) {
+      console.warn(`[email] Skipping SAT Planner email — ${err.message}`);
+    } else {
+      console.error("[email] Unexpected SAT Planner email config error:", err);
+    }
+    return null;
+  }
+}
+
+/** Best-effort welcome email; never throws. */
+export async function sendSatPlannerWelcomeEmail(args: {
+  userId: string;
+  email: string;
+  displayName?: string | null;
+}): Promise<void> {
+  const cfg = await plannerEmailConfig();
+  if (!cfg) return;
+  const message = satPlannerWelcomeEmail({
+    siteUrl: cfg.siteUrl,
+    displayName: args.displayName,
+  });
+  await sendAll(cfg, [
+    {
+      to: args.email,
+      ...message,
+      label: "sat-planner-welcome",
+      idempotencyKey: `welcome-email/${args.userId}`,
+    },
+  ]);
+}
+
+/** Best-effort purchase confirmation; never blocks webhook fulfillment. */
+export async function sendSatPlannerPurchaseEmail(args: {
+  eventId: string;
+  email: string;
+  amount: number;
+  currency: string;
+}): Promise<void> {
+  const cfg = await plannerEmailConfig();
+  if (!cfg) return;
+  const message = satPlannerPurchaseEmail({
+    siteUrl: cfg.siteUrl,
+    amount: args.amount,
+    currency: args.currency,
+  });
+  await sendAll(cfg, [
+    {
+      to: args.email,
+      ...message,
+      label: "sat-planner-purchase",
+      idempotencyKey: `purchase-confirmation/${args.eventId}`,
+    },
+  ]);
+}
+
+/** Best-effort plan-ready email; never blocks activation. */
+export async function sendSatPlannerPlanReadyEmail(args: {
+  planId: string;
+  email: string;
+  testDate: string;
+  assignmentCount: number;
+}): Promise<void> {
+  const cfg = await plannerEmailConfig();
+  if (!cfg) return;
+  const message = satPlannerPlanReadyEmail({
+    siteUrl: cfg.siteUrl,
+    testDate: args.testDate,
+    assignmentCount: args.assignmentCount,
+  });
+  await sendAll(cfg, [
+    {
+      to: args.email,
+      ...message,
+      label: "sat-planner-plan-ready",
+      idempotencyKey: `plan-ready/${args.planId}`,
+    },
+  ]);
 }

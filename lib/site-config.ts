@@ -1,16 +1,19 @@
 export const siteConfig = {
-  brand: "Emmett Funston SAT & Admissions",
+  brand: "Emmett Funston",
   shortBrand: "Emmett Funston",
   founder: "Emmett Funston",
-  founderTitle: "Northwestern University Electrical Engineering",
+  founderTitle: "Electrical Engineering at Northwestern University",
   tagline:
-    "Sharper SAT prep and a serious college application strategy for ambitious students.",
+    "Digital hardware, FPGA, and ASIC/VLSI engineering.",
   description:
-    "Emmett Funston is a Northwestern Engineering student helping ambitious high school students raise their SAT scores and build stronger college applications through a focused, accountable system.",
+    "Electrical Engineering student at Northwestern building digital hardware across RTL, ASIC physical design, FPGA, embedded systems, and PCBs.",
   url:
     process.env.NEXT_PUBLIC_SITE_URL ??
     "https://emmettfunston.com",
-  email: process.env.ADMIN_EMAIL ?? "hello@emmettfunston.com",
+  email: process.env.ADMIN_EMAIL ?? "emmettfunstuff@gmail.com",
+  github: "https://github.com/emmettfunston",
+  linkedin: "https://www.linkedin.com/in/emmettfunston",
+  youtube: "https://www.youtube.com/@EmmettFunston",
 } as const;
 
 /**
@@ -38,31 +41,28 @@ export type NavItem = {
 };
 
 export const mainNav: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "SAT & Admissions", href: "/sat-admissions" },
-  { label: "Packages", href: "/sat-admissions/packages" },
-  { label: "Proof", href: "/sat-admissions/proof" },
-  { label: "Roadmap", href: "/sat-admissions/roadmap" },
-  { label: "Workshop", href: "/sat-admissions/workshop" },
-  { label: "Apply", href: "/sat-admissions/apply" },
+  { label: "Projects", href: "/projects" },
+  { label: "Experience", href: "/#experience" },
+  { label: "About", href: "/#about" },
+  { label: "Media", href: "/content" },
+  { label: "Resume", href: "/resume" },
+  { label: "SAT Planner", href: "/sat-planner", emphasis: true },
 ];
 
 export const footerNav = {
-  program: [
-    { label: "SAT & Admissions", href: "/sat-admissions" },
-    { label: "Packages", href: "/sat-admissions/packages" },
-    { label: "Proof of Results", href: "/sat-admissions/proof" },
-    { label: "The Roadmap", href: "/sat-admissions/roadmap" },
-  ],
-  getStarted: [
-    { label: "Free Workshop", href: "/sat-admissions/workshop" },
-    { label: "Apply to Coach", href: "/sat-admissions/apply" },
-  ],
-  personal: [
-    { label: "Projects", href: "/projects" },
+  engineering: [
+    { label: "Selected Projects", href: "/projects" },
+    { label: "Experience", href: "/#experience" },
+    { label: "Technical Stack", href: "/#stack" },
     { label: "Resume", href: "/resume" },
-    { label: "Drums", href: "/drums" },
-    { label: "Content", href: "/content" },
+  ],
+  profile: [
+    { label: "About", href: "/#about" },
+    { label: "Media / YouTube", href: "/content" },
+    { label: "Drumming", href: "/drums" },
+  ],
+  coaching: [
+    { label: "SAT Study Planner", href: "/sat-planner" },
   ],
 } as const;
 

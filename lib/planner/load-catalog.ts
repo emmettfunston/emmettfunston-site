@@ -10,7 +10,7 @@ export async function loadPlannerCatalog(): Promise<PlannerBook[]> {
   const supabase = await getSupabaseServerClient();
   const { data: books, error: booksError } = await supabase
     .from("books")
-    .select("id, slug, title, category")
+    .select("id, slug, title, category, affiliate_url")
     .eq("active", true)
     .order("category");
 
@@ -33,6 +33,7 @@ export async function loadPlannerCatalog(): Promise<PlannerBook[]> {
     slug: book.slug,
     title: book.title,
     category: book.category as BookCategory,
+    affiliateUrl: book.affiliate_url,
     chapters: (chapters ?? [])
       .filter((c) => c.book_id === book.id)
       .map((c) => ({

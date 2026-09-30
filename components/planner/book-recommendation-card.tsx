@@ -1,6 +1,9 @@
 "use client";
 
+import { ExternalLinkIcon } from "lucide-react";
+
 import type { BookRecommendation, PlannerBook } from "@/lib/planner/types";
+import { resourceUrlForSlug } from "@/lib/planner/resources";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +26,8 @@ export function BookRecommendationCard({
   included,
   onIncludedChange,
 }: BookRecommendationCardProps) {
+  const resourceUrl = book.affiliateUrl ?? resourceUrlForSlug(book.slug);
+
   return (
     <article
       className={cn(
@@ -40,6 +45,17 @@ export function BookRecommendationCard({
         <Badge variant="outline">{LEVEL_LABEL[recommendation.level]}</Badge>
       </div>
       <p className="text-sm text-muted-foreground">{recommendation.reason}</p>
+      {resourceUrl ? (
+        <a
+          href={resourceUrl}
+          target="_blank"
+          rel="sponsored noopener noreferrer"
+          className="inline-flex w-fit items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
+        >
+          View recommended book
+          <ExternalLinkIcon aria-hidden className="size-3.5" />
+        </a>
+      ) : null}
       <label className="flex items-center justify-between gap-3 text-sm">
         <span className="font-medium">Include in My Plan</span>
         <button

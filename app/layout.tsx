@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 
 import { siteConfig } from "@/lib/site-config";
@@ -14,6 +14,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const newsreader = Newsreader({
+  variable: "--font-display",
+  subsets: ["latin"],
+});
+
 /**
  * Base site metadata. Individual route groups (marketing, admin) can override
  * per page — the admin layout intentionally sets `robots: noindex`.
@@ -21,7 +26,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.brand} — SAT Prep & College Admissions Coaching`,
+    default: `${siteConfig.brand} — Digital Hardware & Semiconductor Engineering`,
     template: `%s — ${siteConfig.brand}`,
   },
   description: siteConfig.description,
@@ -29,17 +34,19 @@ export const metadata: Metadata = {
   authors: [{ name: siteConfig.founder }],
   creator: siteConfig.founder,
   keywords: [
-    "SAT prep",
-    "SAT tutoring",
-    "college admissions",
-    "college essay coaching",
-    "Northwestern",
-    "test prep",
-    "1500 SAT",
     "Emmett Funston",
+    "electrical engineering",
+    "digital hardware",
+    "FPGA",
+    "ASIC",
+    "VLSI",
+    "Verilog",
+    "embedded systems",
+    "PCB design",
+    "Northwestern University",
   ],
   openGraph: {
-    title: `${siteConfig.brand} — SAT Prep & College Admissions Coaching`,
+    title: `${siteConfig.brand} — Digital Hardware & Semiconductor Engineering`,
     description: siteConfig.description,
     url: siteConfig.url,
     siteName: siteConfig.brand,
@@ -65,7 +72,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         {children}
