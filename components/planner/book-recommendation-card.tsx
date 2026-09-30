@@ -26,7 +26,7 @@ export function BookRecommendationCard({
   included,
   onIncludedChange,
 }: BookRecommendationCardProps) {
-  const resourceUrl = book.affiliateUrl ?? resourceUrlForSlug(book.slug);
+  const resourceUrl = resourceUrlForSlug(book.slug) ?? book.affiliateUrl;
 
   return (
     <article
